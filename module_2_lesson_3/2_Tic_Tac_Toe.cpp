@@ -4,6 +4,7 @@
 //Задание 2. Крестики-нолики
 
 #include <iostream>
+#include <string>
 #include <limits>
 #include <numeric>
 

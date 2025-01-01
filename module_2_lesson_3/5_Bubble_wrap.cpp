@@ -70,10 +70,14 @@ void pop(bool* wrapBool, int row, int col, char* wrapChar, int& count)
 {
     int start_i, start_j, end_i, end_j;
     std::cout << "Enter the first coordinates:\n";
+    std::cout << "row: ";
     start_i = getCoordinate();
+    std::cout << "col: ";
     start_j = getCoordinate();
     std::cout << "Enter the last coordinates:\n";
+    std::cout << "row: ";
     end_i = getCoordinate();
+    std::cout << "col: ";
     end_j = getCoordinate();
 
     if (start_i > end_i)
@@ -116,4 +120,7 @@ int main()
 
     return 0;
 }
+
+
+
 
