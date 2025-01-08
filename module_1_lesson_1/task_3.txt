@@ -1,0 +1,38 @@
+Основы программирования на C++
+Урок 1. Вводный модуль. Первая программа
+
+Ошибки в коде и как их исправлять
+1\.
+
+include <iostream>
+int main() {
+std::cout << "Hello World!\n";
+}
+
+2\.
+include <iostream>
+int main() {
+std::cout << "Hello World!\n";
+}
+
+3\.
+include <iostream>
+int main() {
+std::cout << "Hello World!\n";
+}
+
+4\.
+include <iostream>
+int main() {
+std::cout << "Hello World!\n";
+}
+
+5\.
+include <iostream>
+int main() {
+std::cout << "Hi,\n";
+std::cout << "my name is Barry Allen\n";
+std::cout << "and i'm the fastest man alive";
+}
+
+  

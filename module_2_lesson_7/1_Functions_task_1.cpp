@@ -8,34 +8,30 @@
 
 void swapvec(std::vector<int>& vec, int* array, int arrayLength)
 {
-	if (vec.size() == arrayLength)
-	{
-		for (int i = 0; i < vec.size(); ++i)
-		{
-			std::swap(vec[i], *(array + i));
-		}
-	}
+    if (vec.size() == arrayLength)
+    {
+        for (int i = 0; i < vec.size(); ++i)
+        {
+            std::swap(vec[i], *(array + i));
+        }
+    }
 }
 
 int main()
 {
-	std::vector<int> vec = { 1, 2, 3, 4, 5 };
-	int array[] = { 6, 7, 8, 9, 10 };
-	int arrayLength = sizeof(array) / sizeof(array[0]);
-	
-	swapvec(vec, array, arrayLength);
+    std::vector<int> vec = { 1, 2, 3, 4, 5 };
+    int array[] = { 6, 7, 8, 9, 10 };
+    int arrayLength = sizeof(array) / sizeof(array[0]);
 
-	for (int i = 0; i < vec.size(); ++i)
-	{
-		std::cout << vec[i] << " ";
-	}
-	
-	std::cout << std::endl;
-	
-	for (int i = 0; i < arrayLength; ++i)
-	{
-		std::cout << array[i] << " ";
-	}
+    swapvec(vec, array, arrayLength);
 
-	return 0;
+    for (const auto &el : vec)
+        std::cout << el << " ";
+
+    std::cout << '\n';
+
+    for (const auto &el : array)
+        std::cout << el << " ";
+
+    return 0;
 }
