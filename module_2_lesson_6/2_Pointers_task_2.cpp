@@ -7,10 +7,7 @@
 
 void reverse(int* ptrArray, int length)
 {
-    for (int i = 0; i < length / 2; ++i)
-    {
-        std::swap(ptrArray[i], ptrArray[length - i - 1]);
-    }
+    std::reverse(ptrArray, ptrArray + length);
 }
 
 int main()
@@ -20,11 +17,9 @@ int main()
 
     reverse(array, length);
 
-    for (int i = 0; i < length; ++i)
-    {
-        std::cout << array[i] << " ";
-    }
+    for (const auto& el : array)
+        std::cout << el << " ";
+    std::cout << '\n';
 
     return 0;
 }
-
