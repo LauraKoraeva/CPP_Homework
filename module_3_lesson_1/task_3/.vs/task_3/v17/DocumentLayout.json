@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Acer\\Desktop\\C\u002B\u002B_Homework\\module_3_lesson_1\\task_3\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{71D93844-02B5-4163-A563-7DA58AE12EDF}|task_3\\task_3.vcxproj|C:\\Users\\Acer\\Desktop\\C\u002B\u002B_Homework\\module_3_lesson_1\\task_3\\task_3\\task_3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{71D93844-02B5-4163-A563-7DA58AE12EDF}|task_3\\task_3.vcxproj|solutionrelative:task_3\\task_3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{71D93844-02B5-4163-A563-7DA58AE12EDF}|task_3\\task_3.vcxproj|C:\\Users\\Acer\\Desktop\\C\u002B\u002B_Homework\\module_3_lesson_1\\task_3\\task_3\\info.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{71D93844-02B5-4163-A563-7DA58AE12EDF}|task_3\\task_3.vcxproj|solutionrelative:task_3\\info.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "info.txt",
+              "DocumentMoniker": "C:\\Users\\Acer\\Desktop\\C\u002B\u002B_Homework\\module_3_lesson_1\\task_3\\task_3\\info.txt",
+              "RelativeDocumentMoniker": "task_3\\info.txt",
+              "ToolTip": "C:\\Users\\Acer\\Desktop\\C\u002B\u002B_Homework\\module_3_lesson_1\\task_3\\task_3\\info.txt",
+              "RelativeToolTip": "task_3\\info.txt",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2025-01-11T19:26:53.134Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "task_3.cpp",
+              "DocumentMoniker": "C:\\Users\\Acer\\Desktop\\C\u002B\u002B_Homework\\module_3_lesson_1\\task_3\\task_3\\task_3.cpp",
+              "RelativeDocumentMoniker": "task_3\\task_3.cpp",
+              "ToolTip": "C:\\Users\\Acer\\Desktop\\C\u002B\u002B_Homework\\module_3_lesson_1\\task_3\\task_3\\task_3.cpp",
+              "RelativeToolTip": "task_3\\task_3.cpp",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAXAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-01-11T19:25:49.296Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
