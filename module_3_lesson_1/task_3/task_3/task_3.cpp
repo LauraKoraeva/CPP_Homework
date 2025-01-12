@@ -23,10 +23,7 @@ int main()
     if (data.is_open())
     {
         int sum = 0;
-        int maxCash = 0;
-        std::string maxName;
-        std::string maxSurname;
-        std::string maxDate;
+        EmployeeInfo max;
 
         while (!data.eof())
         {
@@ -34,16 +31,13 @@ int main()
             data >> employee.name >> employee.surname >> employee.cash >> employee.date;
 
             sum += employee.cash;
-            if (employee.cash > maxCash)
+            if (employee.cash > max.cash)
             {
-                maxCash = employee.cash;
-                maxName = employee.name;
-                maxSurname = employee.surname;
-                maxDate = employee.date;
+                max = { employee.name, employee.surname, employee.cash, employee.date };
             }
         }
         std::cout << "Total cash: " << sum << '\n';
-        std::cout << "Max cash " << "(" << maxCash << ") was paid to " << maxName << " " << maxSurname << " on " << maxDate << '\n';
+        std::cout << "Max cash " << "(" << max.cash << ") was paid to " << max.name << " " << max.surname << " on " << max.date << '\n';
 
         data.close();
     }
