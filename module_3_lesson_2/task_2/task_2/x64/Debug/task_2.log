@@ -1,0 +1,3 @@
+﻿  task_2.cpp
+C:\Users\Acer\Desktop\C++_Homework\module_3_lesson_2\task_2\task_2\task_2.cpp(43,29): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  task_2.vcxproj -> C:\Users\Acer\Desktop\C++_Homework\module_3_lesson_2\task_2\x64\Debug\task_2.exe

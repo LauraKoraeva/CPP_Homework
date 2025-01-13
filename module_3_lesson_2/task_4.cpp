@@ -26,6 +26,7 @@ void readBank(int *bank, int length)
     {
         in >> bank[i];
     }
+    in.close();
 }
 
 void writeBank(int* bank, int bankLength, int* bills, int billsLength)
@@ -37,6 +38,7 @@ void writeBank(int* bank, int bankLength, int* bills, int billsLength)
         if (i % 25 == 0)
             out << std::endl;
     }
+    out.close();
 }
 
 void addMoney(int* bank, int bankLength, int* bills, int billsLength)
