@@ -1,13 +1,16 @@
+// Продвинутые темы и техники C++
+// Урок 2. Запись в файлы
+
+// Задание 1. Реализация записи в ведомость учёта
+
 #include <iostream>
 #include <fstream>
-#include <cstdlib>
-#include <string>
 #include <limits>
 #include <numeric>
 
 bool correctInput(int input)
 {
-    if (std::cin.fail() || std::cin.peek() != '\n' || input < 100)
+    if (std::cin.fail() || std::cin.peek() != '\n')
     {
         std::cerr << "Incorrect input.\n";
         std::cin.clear();
@@ -19,29 +22,14 @@ bool correctInput(int input)
         return true;
 }
 
-void readBank(int *bank, int length)
+void updateBank(int* bank, int size)
 {
-    std::ifstream in("C:\\Users\\Acer\\Desktop\\moneyDraft.txt");  //
-    for (int i = 0; i < 1000; ++i)
-    {
-        in >> bank[i];
-    }
-    in.close();
-}
-
-void writeBank(int* bank, int bankLength, int* bills, int billsLength)
-{
-    std::ofstream out("C:\\Users\\Acer\\Desktop\\moneyDraft.txt");  //
-    for (int i = 1; i <= 1000; ++i)
-    {
-        out << bank[i - 1] << " ";
-        if (i % 25 == 0)
-            out << std::endl;
-    }
+    std::ofstream out("bank.bin", std::ios::binary);
+    out.write((char*)bank, size);
     out.close();
 }
 
-void addMoney(int* bank, int bankLength, int* bills, int billsLength)
+void addMoney(int* bank, int size, int* bills, int billsLength)
 {
     std::srand(std::time(nullptr));
     for (int i = 0; i < 1000; ++i)
@@ -52,78 +40,55 @@ void addMoney(int* bank, int bankLength, int* bills, int billsLength)
         }
     }
 
-    writeBank(bank, 1000, bills, 5);
+    updateBank(bank, size);
     std::cout << "The operation has been completed successfully.\n";
 }
 
-bool checkAvailability(int* bank, int bankLength, int* bills, int billsLength, int amount)
-{   
+int withdrawMoney(int* bank, int size, int* bills, int billsLength)
+{
+    int amount;
+    do
+    {
+        std::cout << "Enter the amount: ";
+        std::cin >> amount;
+    } while (!correctInput(amount));
+
+    if (((amount % 100) != 0) || amount < 100)
+    {
+        std::cerr << "Invalid amount.\n";
+        return 1;
+    }
+
     for (int i = 4; i >= 0; --i)
     {
         int bill = bills[i];
-        if (amount >= bill)
+        for (int j = 0; j < 1000; ++j)
         {
-            for (int j = 0; j < 1000; ++j)
+            if (bank[j] == bill)
             {
-                if (bank[j] == bill)
+                if (amount >= bill)
                 {
                     bank[j] = 0;
                     amount -= bill;
                     if (amount == 0)
                     {
-                        return true;
+                        updateBank(bank, size);
+                        std::cout << "The operation has been completed successfully.\n";
+                        return 0;
                     }
                 }
             }
         }
     }
-    if (amount != 0)
-        return false;
-}
-
-void withdrawMoney(int* bank, int bankLength, int* bills, int billsLength)
-{
-    int amount;
-    do
-    {
-        std::cout << "Enter the withdrawal amount: ";
-        std::cin >> amount;  
-    } while (!correctInput(amount));
-    if (checkAvailability(bank, 1000, bills, 5, amount))
-    {
-        for (int i = 4; i >= 0; --i)
-        {
-            int bill = bills[i];
-            if (amount >= bill)
-            {
-                for (int j = 0; j < 1000; ++j)
-                {
-                    if (bank[j] == bill)
-                    {
-                        bank[j] = 0;
-                        amount -= bill;
-                        if (amount == 0)
-                        {
-                            writeBank(bank, 1000, bills, 5);
-                            std::cout << "The operation has been completed successfully.\n";
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    else
-        std::cout << "Not enough compatible bills!\n";
-         
+    std::cerr << "Not enough compatible bills.\n";
+    return 1;
 }
 
 int main()
 {
-	int bills[5] = { 100, 200, 500, 1000, 5000 };
+    int bills[5] = { 100, 200, 500, 1000, 5000 };
     int bank[1000];
-
-    readBank(bank, 1000);
+    int size = sizeof(bank);
 
     std::string operation;
     do
@@ -131,14 +96,28 @@ int main()
         std::cout << "+  - refill ATM machine.\n";
         std::cout << "-  - withdraw money.\n";
         std::cout << "Choose the operation: ";
-        std::getline(std::cin, operation);
-    } while (operation != "+" && operation != "-"); 
+        std::cin >> operation;
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    } while (operation != "+" && operation != "-");
+
+    std::ifstream in("bank.bin", std::ios::binary);
+    if (in.is_open())
+    {
+        in.read((char*)bank, sizeof(bank));
+        in.close();
+    }
+    else
+    {
+        for (int i = 0; i < 1000; ++i)
+        {
+            bank[i] = 0;
+        }
+    }
 
     if (operation == "+")
-        addMoney(bank, 1000, bills, 5);
+        addMoney(bank, size, bills, 5);
     else if (operation == "-")
-        withdrawMoney(bank, 1000, bills, 5);
-    
+        withdrawMoney(bank, size, bills, 5);
+
     return 0;
-   
 }

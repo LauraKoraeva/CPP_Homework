@@ -1,3 +1,8 @@
+// Продвинутые темы и техники C++
+// Урок 3. Структуры данных
+
+// 1. Ведомость учёта
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -42,22 +47,22 @@ bool correctDate(std::string& date)
 
     if (month > 12)
     {
-        std::cout << "Invalid date.Try again\n";
+        std::cerr << "Invalid date.Try again\n";
         correctDate = false;
     }
     else if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) && day > 31)
     {
-        std::cout << "Invalid date.Try again\n";
+        std::cerr << "Invalid date.Try again\n";
         correctDate = false;
     }
     else if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30)
     {
-        std::cout << "Invalid date.Try again\n";
+        std::cerr << "Invalid date.Try again\n";
         correctDate = false;
     }
     else if (month == 2 && day > 29)
     {
-        std::cout << "Invalid date.Try again\n";
+        std::cerr << "Invalid date.Try again\n";
         correctDate = false;
     }
     return correctDate;
@@ -85,28 +90,32 @@ void getInfo(PaymentInfo& payment)
 void listInfo()
 {
     std::ifstream database;
-    database.open("C:\\Users\\Acer\\Desktop\\textbook\\ConsoleApplication1\\ConsoleApplication1\\database.txt");    //
-    std::vector<PaymentInfo> payment(100);
-
-    int i = 0;
-    while (!database.eof())
+    database.open("database.txt");    
+    if (database.is_open())
     {
-        database >> payment[i].name >> payment[i].surname >> payment[i].date >> payment[i].cash >> payment[i].currency;
-        if (payment[i].name.empty())
+        std::vector<PaymentInfo> payment(100);
+        int i = 0;
+        while (!database.eof())
         {
-            break;
-        }
-        else
-        std::cout << payment[i].name << " " << payment[i].surname << " " << payment[i].date << " " << payment[i].cash << " " << payment[i].currency << " " << std::endl;
+            database >> payment[i].name >> payment[i].surname >> payment[i].date >> payment[i].cash >> payment[i].currency;
+            if (payment[i].name.empty())
+            {
+                break;
+            }
+            else
+                std::cout << payment[i].name << " " << payment[i].surname << " " << payment[i].date << " " << payment[i].cash << " " << payment[i].currency << " " << std::endl;
 
-        ++i;
+            ++i;
+        }
+        database.close();
     }
-    database.close();
+    else
+        std::cerr << "Path is not valid.\n";
 }
 
 void addInfo()
 {
-    std::ofstream database("C:\\Users\\Acer\\Desktop\\textbook\\ConsoleApplication1\\ConsoleApplication1\\database.txt", std::ios::app);            //
+    std::ofstream database("database.txt", std::ios::app);            
 
     if (database.is_open())
     {
@@ -122,7 +131,7 @@ void addInfo()
         database.close();
     }
     else
-        std::cout << "An error has occurred.\n";
+        std::cerr << "Path is not valid.\n";
 }
 
 int main()
@@ -143,3 +152,4 @@ int main()
 
     return 0;
 }
+
