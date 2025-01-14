@@ -1,12 +1,13 @@
 // Продвинутые темы и техники C++
 // Урок 2. Запись в файлы
 
-// Задание 1. Реализация записи в ведомость учёта
+// Задание 4. Реализация симуляции банкомата
 
 #include <iostream>
 #include <fstream>
 #include <limits>
 #include <numeric>
+#include <cstring>
 
 bool correctInput(int input)
 {
@@ -107,12 +108,7 @@ int main()
         in.close();
     }
     else
-    {
-        for (int i = 0; i < 1000; ++i)
-        {
-            bank[i] = 0;
-        }
-    }
+        std::memset(bank, 0, sizeof(bank));
 
     if (operation == "+")
         addMoney(bank, size, bills, 5);
