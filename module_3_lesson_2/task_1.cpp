@@ -83,17 +83,21 @@ void getInfo(PaymentInfo& payment)
 int main()
 {
     std::ofstream database("database.txt", std::ios::app);
+    if (database.is_open())
+    {
+        database.setf(std::ios::showpoint);
+        database.setf(std::ios::fixed);
+        database.precision(2);
 
-    database.setf(std::ios::showpoint);
-    database.setf(std::ios::fixed);
-    database.precision(2);
+        PaymentInfo payment;
+        getInfo(payment);
 
-    PaymentInfo payment;
-    getInfo(payment);
+        database << payment.name << " " << payment.surname << " " << payment.date << " " << payment.cash << " " << payment.currency << std::endl;
 
-    database << payment.name << " " << payment.surname << " " << payment.date << " " << payment.cash << " " << payment.currency << std::endl;
-
-    database.close();
+        database.close();
+    }
+    else
+        std::cerr << "Path is not valid.\n";
 
     return 0;
 }

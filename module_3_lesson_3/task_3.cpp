@@ -115,7 +115,7 @@ int main()
     Vector vec_result;
     switch (operation)
     {
-    case 1:
+    case OPERATION_ADD:
         std::cout << "Enter the name and the coordinates of the first vector:\n";
         getInfo(vec_1);
         std::cout << "Enter the name and the coordinates of the second vector:\n";
@@ -123,7 +123,7 @@ int main()
         add(vec_1, vec_2, vec_result);
         printResult(vec_result);
         break;
-    case 2:
+    case OPERATION_SUBSTRACT:
         std::cout << "Enter the name and the coordinates of the first vector:\n";
         getInfo(vec_1);
         std::cout << "Enter the name and the coordinates of the second vector:\n";
@@ -131,7 +131,7 @@ int main()
         substract(vec_1, vec_2, vec_result);
         printResult(vec_result);
         break;
-    case 3:
+    case OPERATION_SCALE:
         double scalar;
         std::cout << "Enter the name and the coordinates of the vector:\n";
         getInfo(vec_1);
@@ -140,7 +140,7 @@ int main()
         scale(vec_1, scalar);
         printResult(vec_1);
         break;
-    case 4:
+    case OPERATION_LENGTH:
         std::cout << "Enter the name and the coordinates of the vector:\n";
         getInfo(vec_1);
         double len;
@@ -149,7 +149,7 @@ int main()
         std::cout << "Name: " << vec_1.name << '\n';
         std::cout << "Length: " << len << '\n';
         break;
-    case 5:
+    case OPERATION_NORMALIZE:
         std::cout << "Enter the name and the coordinates of the vector:\n";
         getInfo(vec_1);
         normalize(vec_1);
@@ -162,4 +162,3 @@ int main()
 
     return 0;
 }
-

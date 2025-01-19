@@ -90,7 +90,7 @@ void getInfo(PaymentInfo& payment)
 void listInfo()
 {
     std::ifstream database;
-    database.open("database.txt");    
+    database.open("database.txt");
     if (database.is_open())
     {
         std::vector<PaymentInfo> payment(100);
@@ -115,7 +115,7 @@ void listInfo()
 
 void addInfo()
 {
-    std::ofstream database("database.txt", std::ios::app);            
+    std::ofstream database("database.txt", std::ios::app);
 
     if (database.is_open())
     {
@@ -145,11 +145,18 @@ int main()
         std::cin >> operation;
     } while (!correctInput(operation));
 
-    if (operation == LIST)
+    switch (operation)
+    {
+    case LIST:
         listInfo();
-    else
+        break;
+    case ADD:
         addInfo();
-
+        break;
+    default:
+        std::cout << "No such operation!";
+        break;
+    }
+    
     return 0;
 }
-
