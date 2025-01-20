@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Acer/Desktop/C++_HOMEWORK/module_1_lesson_2",
-      "program": "c:/Users/Acer/Desktop/C++_HOMEWORK/module_1_lesson_2/build/Debug/outDebug",
+      "cwd": "c:/Users/Acer/Desktop/C++_Homework/module_3_lesson_5",
+      "program": "c:/Users/Acer/Desktop/C++_Homework/module_3_lesson_5/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
