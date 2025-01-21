@@ -10,7 +10,7 @@ int main()
     std::time_t currentTime = std::time(nullptr);
     std::time_t targetTime = currentTime + timer.tm_min * 60 + timer.tm_sec;
 
-    while (currentTime != targetTime)                                        // -1
+    while (currentTime != targetTime)                          
     {
         std::time_t diff = targetTime - currentTime;
         currentTime = std::time(nullptr);             
