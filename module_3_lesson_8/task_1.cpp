@@ -3,6 +3,22 @@
 #include <iomanip> 
 #include <map> 
 #include <sstream>
+#include <limits>
+#include <numeric>
+#include <string>
+
+bool correctInput(int input)
+{
+    if (std::cin.fail() || std::cin.peek() != '\n')
+    {
+        std::cerr << "Incorrect input.\n";
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        return false;
+    }
+    else
+        return true;
+}
 
 class Player
 {
@@ -24,6 +40,7 @@ private:
     };
 
     int status = STOPPED;
+    int chosenSong;
     
 public:
     enum Operation
@@ -54,11 +71,25 @@ public:
     {
         Track song;
         std::cout << "Title: ";
-        std::cin >> song.m_title;
-        std::cout << "Release date: ";
-        std::cin >> std::get_time(&song.m_releaseDate, "%Y/%m/%d");
-        std::cout << "Length: ";
-        std::cin >> song.m_length;
+        std::getline(std::cin, song.m_title);
+        std::istringstream ss("");
+        do
+        {
+            std::cout << "Release date [YYYY/MM/DD]: ";
+            std::string inputDate;
+            std::cin >> inputDate;
+            std::istringstream ss(inputDate);
+            ss >> std::get_time(&song.m_releaseDate, "%Y/%m/%d");
+            if (ss.fail() || song.m_releaseDate.tm_year < 0 || song.m_releaseDate.tm_mday == 0)
+            {
+                std::cerr << "Incorrect input" << std::endl;
+            }
+        } while (ss.fail() || song.m_releaseDate.tm_year < 0 || song.m_releaseDate.tm_mday == 0);
+        do
+        {
+            std::cout << "Length: ";
+            std::cin >> song.m_length;
+        } while (!correctInput(song.m_length));
         int number = trackList.size() + 1;
         trackList[number] = song;
     }
@@ -116,24 +147,29 @@ public:
         std::cout << "-------------------\n";
     }
 
-    void play(Player session)
+    void printDetails()
+    {
+        std::cout << "\n*******PLAYING*******\n";
+        std::map<int, Track>::iterator it = trackList.find(chosenSong);
+        std::cout << "Title: " << it->second.m_title << '\n';
+        std::cout << "Released: " << it->second.m_releaseDate.tm_year + 1900 << "/" << std::setw(2)
+            << std::setfill('0') << it->second.m_releaseDate.tm_mon + 1 << "/" << it->second.m_releaseDate.tm_mday << '\n';
+        std::cout << "Length: " << it->second.m_length << '\n';
+        std::cout << "*********************\n";
+    }
+
+    void play(Player& session)
     {
         if (status != PLAYING)
         {
             session.printTrackList();
-            std::cout << "Choose a song: ";
-            int choice;
-            std::cin >> choice;
-
-            std::cout << "\n*******PLAYING*******\n";
-            std::map<int, Track>::iterator it = trackList.find(choice);
-            std::cout << "Title: " << it->second.m_title << '\n';
-            std::cout << "Released: " << it->second.m_releaseDate.tm_year + 1900 << "/" << std::setw(2) 
-                << std::setfill('0') <<it->second.m_releaseDate.tm_mon + 1 << "/" << it->second.m_releaseDate.tm_mday << '\n';
-            std::cout << "Length: " << it->second.m_length << '\n';
-            std::cout << "*********************\n";
-
+            do
+            {
+                std::cout << "Choose a song: ";
+                std::cin >> chosenSong;
+            } while (!correctInput(chosenSong));
             status = PLAYING;
+            printDetails();
         }
     }
 
@@ -148,18 +184,15 @@ public:
 
     void next()
     {
-        std::srand(std::time(nullptr));       
-        int choice = rand() % trackList.size() + 1;
-        
-        std::cout << "\n*******PLAYING*******\n";
-        std::map<int, Track>::iterator it = trackList.find(choice);
-        std::cout << "Title: " << it->second.m_title << '\n';
-        std::cout << "Released: " << it->second.m_releaseDate.tm_year + 1900 << "/" << std::setw(2)
-            << std::setfill('0') << it->second.m_releaseDate.tm_mon + 1 << "/" << it->second.m_releaseDate.tm_mday << '\n';
-        std::cout << "Length: " << it->second.m_length << '\n';
-        std::cout << "*********************\n";
-
+        int nextSong;
+        do
+        {
+            std::srand(std::time(nullptr));
+            nextSong = rand() % trackList.size() + 1;
+        } while (nextSong == chosenSong);
+        chosenSong = nextSong;
         status = PLAYING;
+        printDetails();
     }
 
     void stop()
@@ -181,7 +214,12 @@ int main()
     int operation;
     while (true)
     {
-        std::cin >> operation;
+        do
+        {
+            std::cout << "Choose the operation: ";
+            std::cin >> operation;
+        } while (!correctInput(operation));
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (operation)
         {
@@ -205,6 +243,8 @@ int main()
             break;
         case session.EXIT:
             return 0;
+        default:
+            std::cout << "No such operation.\n";
         }
     }
 }
