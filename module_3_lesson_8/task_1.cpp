@@ -56,7 +56,7 @@ public:
     
     void showMenu()
     {
-        std::cout << "-------MENU--------\n";
+        std::cout << "\n-------MENU--------\n";
         std::cout << "1 - Play\n";
         std::cout << "2 - Pause\n";
         std::cout << "3 - Stop\n";
@@ -64,7 +64,7 @@ public:
         std::cout << "5 - Add a new track\n";
         std::cout << "6 - Show menu\n";
         std::cout << "7 - Exit\n";
-        std::cout << "-------------------\n";
+        std::cout << "-------------------\n\n";
     }
     
     void addNewTrack()
@@ -139,23 +139,26 @@ public:
 
     void printTrackList()
     {
-        std::cout << "-----PLAYLIST------\n";
+        std::cout << "\n------------PLAYLIST-------------\n";
         for (std::map<int, Track>::iterator it = trackList.begin(); it != trackList.end(); ++it)
         {
             std::cout << std::setw(2) << std::setfill('0') << it->first << " - " << it->second.m_title << '\n';
         }
-        std::cout << "-------------------\n";
+        std::cout << "---------------------------------\n\n";
     }
 
     void printDetails()
     {
-        std::cout << "\n*******PLAYING*******\n";
+        std::cout << "\n***********************************\n";
+        std::cout << "**************PLAYING**************\n";
+        std::cout << "***********************************\n";
         std::map<int, Track>::iterator it = trackList.find(chosenSong);
         std::cout << "Title: " << it->second.m_title << '\n';
         std::cout << "Released: " << it->second.m_releaseDate.tm_year + 1900 << "/" << std::setw(2)
             << std::setfill('0') << it->second.m_releaseDate.tm_mon + 1 << "/" << it->second.m_releaseDate.tm_mday << '\n';
         std::cout << "Length: " << it->second.m_length << '\n';
-        std::cout << "*********************\n";
+        std::cout << "***********************************\n";
+        std::cout << "***********************************\n\n";
     }
 
     void play(Player& session)
@@ -177,7 +180,9 @@ public:
     {
         if (status != PAUSED && status != STOPPED)
         {
-            std::cout << "\n*******PAUSED********\n";
+            std::cout << "\n***********************************\n";
+            std::cout << "**************PAUSED***************\n";
+            std::cout << "***********************************\n\n";
             status = PAUSED;
         }
     }
@@ -199,7 +204,9 @@ public:
     {
         if (status != STOPPED)
         {
-            std::cout << "\n*******STOPPED*******\n";
+            std::cout << "\n***********************************\n";
+            std::cout << "**************STOPPED**************\n";
+            std::cout << "***********************************\n\n";
             status = STOPPED;
         }
     }
