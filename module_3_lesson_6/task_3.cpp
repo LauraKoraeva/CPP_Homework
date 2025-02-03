@@ -1,20 +1,35 @@
-#include <iostream>
-#include <ctime>
-#include <iomanip>
+#include <iostream> 
+#include <ctime> 
+#include <iomanip> 
+#include <sstream>
 
 int main()
 {
-    std::cout << "Set the timer [MM:SS]: ";
+    std::istringstream ss("");
     std::tm timer;
-    std::cin >> std::get_time(&timer, "%M:%S");
+    do
+    {
+        std::cout << "Set the timer [MM:SS]: ";
+        std::string inputTimer;
+        std::cin >> inputTimer;
+        std::istringstream ss(inputTimer);
+        ss >> std::get_time(&timer, "%M:%S");
+
+        if (ss.fail() || timer.tm_min < 0 || timer.tm_min > 59 || timer.tm_sec < 0 || timer.tm_sec > 59)
+        {
+            std::cerr << "Incorrect input" << std::endl;
+        }
+    } while (ss.fail() || timer.tm_min < 0 || timer.tm_min > 59 || timer.tm_sec < 0 || timer.tm_sec > 59);
+
+
     std::time_t currentTime = std::time(nullptr);
     std::time_t targetTime = currentTime + timer.tm_min * 60 + timer.tm_sec;
 
-    while (currentTime != targetTime)                          
+    while (currentTime != targetTime)
     {
         std::time_t diff = targetTime - currentTime;
-        currentTime = std::time(nullptr);             
-        if (currentTime + diff != targetTime)      
+        currentTime = std::time(nullptr);
+        if (currentTime + diff != targetTime)
         {
             diff = targetTime - currentTime;
             int minutes = diff / 60;

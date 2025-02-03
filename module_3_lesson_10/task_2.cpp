@@ -44,7 +44,7 @@ void travelling(char name, int time)
     if (!station.empty())
     {
         std::cout << (std::stringstream() << "\nTrain " << name << " is waiting\n").str();
-        queue.emplace(queue.size() + 1, name);
+        queue.emplace(queue.size() + 1, name);                                               // ADD MUTEX
     }
     while (true)
         if (queue.empty() || queue.begin()->second == name)
