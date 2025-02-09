@@ -1,3 +1,8 @@
+// Продвинутые темы и техники C++
+// Урок 8. Введение в ООП. Часть 1
+
+// Задание 2. Реализация программы симуляции мобильного телефона
+
 #include <iostream>
 #include <string>
 #include <map>
@@ -89,19 +94,19 @@ public:
         else
             return true;
     }
-    
-    int add()
+
+    void add()
     {
         std::cout << "Enter name: ";
         std::getline(std::cin, contactName);
-        
+
         std::cout << "Enter number: ";
         std::getline(std::cin, contactNumber);
         if (!checkNumber())
         {
             std::cerr << "Invalid phone number.\n";
         }
-        
+
         phoneBook.setContact(contactName, contactNumber);
     }
 

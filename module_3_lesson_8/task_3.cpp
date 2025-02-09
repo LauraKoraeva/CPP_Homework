@@ -1,3 +1,8 @@
+// Продвинутые темы и техники C++
+// Урок 8. Введение в ООП. Часть 1
+
+// Задание 3. Реализация программы управления окном рабочего стола
+
 #include <iostream>
 #include <limits>
 #include <numeric>
@@ -38,7 +43,7 @@ public:
     void showWindow(int x, int y, int end_x, int end_y)
     {
         setScreen();
-        for (int i = x; i < end_x; ++i)     
+        for (int i = x; i < end_x; ++i)
         {
             for (int j = y; j < end_y; ++j)
             {
@@ -61,8 +66,8 @@ class Window
 {
     int m_x = 0;
     int m_y = 0;
-    int m_windowHeight = 10;    
-    int m_windowWidth = 10;   
+    int m_windowHeight = 10;
+    int m_windowWidth = 10;
 
 public:
     enum Operation
@@ -107,7 +112,7 @@ public:
             m_windowHeight = height;
     }
 
-    int getHeight() { return m_windowHeight; }  
+    int getHeight() { return m_windowHeight; }
 
     void setWidth(int width, Screen* screen)
     {
@@ -166,7 +171,7 @@ public:
         int end_y = m_y + m_windowWidth;
         if (end_y >= screen->getWidth())
             end_y = screen->getWidth();
-         
+
         screen->showWindow(m_x, m_y, end_x, end_y);
     }
 };
@@ -182,7 +187,13 @@ int main()
     {
         do
         {
-            std::cout << "Choose the operation: ";
+            std::cout << "----------------------\n";
+            std::cout << "Choose the operation:\n";
+            std::cout << "1 - move\n";
+            std::cout << "2 - resize\n";
+            std::cout << "3 - display\n";
+            std::cout << "4 - close\n";
+            std::cout << "----------------------\n";
             std::cin >> operation;
         } while (!correctInput(operation));
 
