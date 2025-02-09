@@ -25,11 +25,11 @@ int main()
     {
         Birthday person;
         std::cout << "Enter the name: ";
-        std::cin >> person.name;
+        std::getline(std::cin, person.name);
         if (person.name == "end")
             break;
         std::cout << "Enter the surname: ";
-        std::cin >> person.surname;
+        std::getline(std::cin, person.surname);
 
         std::istringstream ss("");
         do
@@ -45,7 +45,7 @@ int main()
                 std::cerr << "Incorrect input" << std::endl;
             }
         } while (ss.fail() || person.birthday.tm_year < 0 || person.birthday.tm_mday == 0);
-
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         birthdays.push_back(person);
     }
@@ -89,6 +89,4 @@ int main()
 
     return 0;
 }
-
-
 

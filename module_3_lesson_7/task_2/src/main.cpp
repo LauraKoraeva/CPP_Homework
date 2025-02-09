@@ -6,6 +6,7 @@
 #include "gpu.h"
 #include "kbd.h"
 #include "ram.h"
+#include "utility.h"
 
 int main()
 {
@@ -18,9 +19,13 @@ int main()
         std::cout << "4 - save numbers\n";
         std::cout << "5 - load numbers\n";
         std::cout << "6 - exit\n";
-
+        
         int choice;
-        std::cin >> choice;
+        do
+        {
+            std::cin >> choice;
+        } while (!correctInput(choice));
+
         switch (choice)
         {
         case 1:
@@ -40,6 +45,8 @@ int main()
             break;
         case 6:
             return 0;
+        default:
+            std::cout << "No such command.\n";
         }
     }
 

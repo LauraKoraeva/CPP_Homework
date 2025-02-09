@@ -1,12 +1,19 @@
 #include <iostream>
 #include "coordinates.h"
+#include "utility.h"
 
 void getPoint(Point& point)
 {
-    std::cout << "x: ";
-    std::cin >> point.x;
-    std::cout << "y: ";
-    std::cin >> point.y;
+    do
+    {
+        std::cout << "x: ";
+        std::cin >> point.x;
+    } while (!correctInput(point.x));
+    do
+    {
+        std::cout << "y: ";
+        std::cin >> point.y;
+    } while (!correctInput(point.y));
 }
 
 void printPoint(const Point& point)

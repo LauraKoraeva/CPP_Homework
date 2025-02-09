@@ -1,6 +1,7 @@
 #include <iostream>
 #include "coordinates.h"
 #include "instruments.h"
+#include "utility.h"
 
 int main()
 {
@@ -24,7 +25,10 @@ int main()
         std::cout << "2 - tweezers\n";
         std::cout << "3 - suture\n";
         std::cout << '\n';
-        std::cin >> choice;        //
+        do
+        {
+            std::cin >> choice;      
+        } while (!correctInput(choice));
 
         switch (choice)
         {
@@ -49,6 +53,8 @@ int main()
             suture(point_3, point_4);
             std::cout << "\nThe operation was completed successfully!\n";
             return 0;
+        default:
+            std::cout << "No such procedure.\n";
         }
     }
 }
