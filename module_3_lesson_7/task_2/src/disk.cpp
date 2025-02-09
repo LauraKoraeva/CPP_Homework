@@ -16,7 +16,7 @@ void save()
         std::cout << "\nData has been saved.\n\n";
     }
     else
-        std::cout << "\nInvalid path.\n\n";     //
+        std::cout << "\nInvalid path.\n\n";     
 }
 
 void load()
@@ -33,5 +33,5 @@ void load()
         std::cout << "\nData has been loaded to RAM.\n\n";
     }
     else
-        std::cout << "\nInvalid path.\n\n";     //
+        std::cout << "\nInvalid path.\n\n";   
 }
