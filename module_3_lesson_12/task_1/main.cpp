@@ -1,4 +1,9 @@
-﻿#include <iostream>
+﻿// Продвинутые темы и техники C++
+// Урок 12. HTTP запросы по сети
+
+// Задание 1. Пользовательские запросы
+
+#include <iostream>
 #include <string>
 #include <cpr/cpr.h>
 
@@ -10,7 +15,7 @@ public:
     void get()
     {
         response = cpr::Get(cpr::Url("http://httpbin.org/get"),
-            cpr::Header({{"user-agent", "Mozilla/5.0"}}));
+            cpr::Header({{"User-Agent", "Mozilla/5.0"}}));
         std::cout << response.text << '\n';
     }
     
