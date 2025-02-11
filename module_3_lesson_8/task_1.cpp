@@ -30,9 +30,9 @@ class Player
 private:
     struct Track
     {
-        std::string m_title = {""};
-        std::tm m_releaseDate = {};
-        int m_length = 0;
+        std::string title = { "" };
+        std::tm releaseDate = {};
+        int length = 0;
     };
 
     std::map<int, Track> trackList;
@@ -46,7 +46,7 @@ private:
 
     int status = STOPPED;
     int chosenSong;
-    
+
 public:
     enum Operation
     {
@@ -58,7 +58,7 @@ public:
         SHOW_MENU,
         EXIT,
     };
-    
+
     void showMenu()
     {
         std::cout << "\n-------MENU--------\n";
@@ -71,12 +71,12 @@ public:
         std::cout << "7 - Exit\n";
         std::cout << "-------------------\n\n";
     }
-    
+
     void addNewTrack()
     {
         Track song;
         std::cout << "Title: ";
-        std::getline(std::cin, song.m_title);
+        std::getline(std::cin, song.title);
         std::istringstream ss("");
         do
         {
@@ -84,17 +84,17 @@ public:
             std::string inputDate;
             std::cin >> inputDate;
             std::istringstream ss(inputDate);
-            ss >> std::get_time(&song.m_releaseDate, "%Y/%m/%d");
-            if (ss.fail() || song.m_releaseDate.tm_year < 0 || song.m_releaseDate.tm_mday == 0)
+            ss >> std::get_time(&song.releaseDate, "%Y/%m/%d");
+            if (ss.fail() || song.releaseDate.tm_year < 0 || song.releaseDate.tm_mday == 0)
             {
                 std::cerr << "Incorrect input" << std::endl;
             }
-        } while (ss.fail() || song.m_releaseDate.tm_year < 0 || song.m_releaseDate.tm_mday == 0);
+        } while (ss.fail() || song.releaseDate.tm_year < 0 || song.releaseDate.tm_mday == 0);
         do
         {
             std::cout << "Length: ";
-            std::cin >> song.m_length;
-        } while (!correctInput(song.m_length));
+            std::cin >> song.length;
+        } while (!correctInput(song.length));
         int number = trackList.size() + 1;
         trackList[number] = song;
     }
@@ -102,43 +102,43 @@ public:
     void addPlaylist()
     {
         Track song_1;
-        song_1.m_title = "Set Fire to the Rain";
+        song_1.title = "Set Fire to the Rain";
         std::string d = "2011/07/04";
         std::istringstream ss_1(d);
-        ss_1 >> std::get_time(&song_1.m_releaseDate, "%Y/%m/%d");
-        song_1.m_length = 242;
+        ss_1 >> std::get_time(&song_1.releaseDate, "%Y/%m/%d");
+        song_1.length = 242;
         trackList[1] = song_1;
 
         Track song_2;
-        song_2.m_title = "Chandelier";
+        song_2.title = "Chandelier";
         d = "2014/03/17";
         std::istringstream ss_2(d);
-        ss_2 >> std::get_time(&song_2.m_releaseDate, "%Y/%m/%d");
-        song_2.m_length = 216;
+        ss_2 >> std::get_time(&song_2.releaseDate, "%Y/%m/%d");
+        song_2.length = 216;
         trackList[2] = song_2;
 
         Track song_3;
-        song_3.m_title = "Only Love Can Hurt Like This";
+        song_3.title = "Only Love Can Hurt Like This";
         d = "2014/05/11";
         std::istringstream ss_3(d);
-        ss_3 >> std::get_time(&song_3.m_releaseDate, "%Y/%m/%d");
-        song_3.m_length = 232;
+        ss_3 >> std::get_time(&song_3.releaseDate, "%Y/%m/%d");
+        song_3.length = 232;
         trackList[3] = song_3;
 
         Track song_4;
-        song_4.m_title = "Just Like Fire";
+        song_4.title = "Just Like Fire";
         d = "2016/04/15";
         std::istringstream ss_4(d);
-        ss_4 >> std::get_time(&song_4.m_releaseDate, "%Y/%m/%d");
-        song_4.m_length = 215;
+        ss_4 >> std::get_time(&song_4.releaseDate, "%Y/%m/%d");
+        song_4.length = 215;
         trackList[4] = song_4;
 
         Track song_5;
-        song_5.m_title = "Flowers";
+        song_5.title = "Flowers";
         d = "2023/01/12";
         std::istringstream ss_5(d);
-        ss_5 >> std::get_time(&song_5.m_releaseDate, "%Y/%m/%d");
-        song_5.m_length = 200;
+        ss_5 >> std::get_time(&song_5.releaseDate, "%Y/%m/%d");
+        song_5.length = 200;
         trackList[5] = song_5;
     }
 
@@ -147,7 +147,7 @@ public:
         std::cout << "\n------------PLAYLIST-------------\n";
         for (std::map<int, Track>::iterator it = trackList.begin(); it != trackList.end(); ++it)
         {
-            std::cout << std::setw(2) << std::setfill('0') << it->first << " - " << it->second.m_title << '\n';
+            std::cout << std::setw(2) << std::setfill('0') << it->first << " - " << it->second.title << '\n';
         }
         std::cout << "---------------------------------\n\n";
     }
@@ -158,10 +158,10 @@ public:
         std::cout << "**************PLAYING**************\n";
         std::cout << "***********************************\n";
         std::map<int, Track>::iterator it = trackList.find(chosenSong);
-        std::cout << "Title: " << it->second.m_title << '\n';
-        std::cout << "Released: " << it->second.m_releaseDate.tm_year + 1900 << "/" << std::setw(2)
-            << std::setfill('0') << it->second.m_releaseDate.tm_mon + 1 << "/" << it->second.m_releaseDate.tm_mday << '\n';
-        std::cout << "Length: " << it->second.m_length << '\n';
+        std::cout << "Title: " << it->second.title << '\n';
+        std::cout << "Released: " << it->second.releaseDate.tm_year + 1900 << "/" << std::setw(2)
+            << std::setfill('0') << it->second.releaseDate.tm_mon + 1 << "/" << it->second.releaseDate.tm_mday << '\n';
+        std::cout << "Length: " << it->second.length << '\n';
         std::cout << "***********************************\n";
         std::cout << "***********************************\n\n";
     }
