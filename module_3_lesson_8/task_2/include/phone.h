@@ -6,6 +6,7 @@ class Phone
     PhoneBook* phoneBook;
     std::string contactName;
     std::string contactNumber;
+    
 public:
     enum Operation
     {
@@ -14,6 +15,7 @@ public:
         SMS,
         EXIT,
     };
+
     Phone();
 
     bool checkNumber();

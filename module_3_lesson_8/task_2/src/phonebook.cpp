@@ -3,7 +3,6 @@
 #include <map>
 #include "phonebook.h"
 
-
 void PhoneBook::setContact(std::string inName, std::string inNumber)
 {
     name = inName;
