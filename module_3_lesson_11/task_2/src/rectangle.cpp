@@ -30,3 +30,5 @@ std::string Rectangle::defineType()
 {
     return "Rectangle";
 }
+
+Rectangle::~Rectangle() { }

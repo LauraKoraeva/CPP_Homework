@@ -33,3 +33,5 @@ std::string Triangle::defineType()
 {
     return "Triangle";
 }
+
+Triangle::~Triangle() { }

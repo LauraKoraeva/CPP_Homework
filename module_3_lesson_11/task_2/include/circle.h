@@ -14,4 +14,6 @@ public:
     virtual BoundingBoxDimensions calculateDimensions();
     
     virtual std::string defineType();
+
+    ~Circle();
 };

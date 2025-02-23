@@ -29,3 +29,5 @@ std::string Circle::defineType()
 {
     return "Circle";
 }
+
+Circle::~Circle() { }
