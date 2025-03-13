@@ -1,3 +1,8 @@
+// Продвинутые темы и техники C++
+// Урок 10. Введение в многопоточность
+
+// Задание 1. Заплыв на 100 метров
+
 #include <iostream>    
 #include <thread>        
 #include <chrono>  
@@ -7,13 +12,14 @@
 #include <iomanip>
 #include <limits>
 #include <numeric>
+#include <vector>
 
-std::map<int, std::string> results;
+std::multimap<int, std::string> results;
 std::mutex results_access;
 
 bool correctInput(int input)
 {
-    if (std::cin.fail() || std::cin.peek() != '\n')
+    if (std::cin.fail() || std::cin.peek() != '\n' || input <= 0)
     {
         std::cerr << "Incorrect input.\n";
         std::cin.clear();
@@ -24,12 +30,13 @@ bool correctInput(int input)
         return true;
 }
 
-void printResults(std::map<int, std::string> results)
+void printResults(std::multimap<int, std::string> results)
 {
     results_access.lock();
+    std::cout << results.size() << '\n';
     std::cout << "\n**********RESULTS**********\n";
     std::cout << "Time\t" << std::setw(15) << "Name" << '\n';
-    for (std::map<int, std::string>::iterator it = results.begin(); it != results.end(); ++it)
+    for (std::multimap<int, std::string>::iterator it = results.begin(); it != results.end(); ++it)
     {
         std::cout << std::setw(2) << std::setfill('0') << it->first << " s\t" << std::setw(15) << std::setfill(' ') << it->second << '\n';
     }
@@ -37,15 +44,22 @@ void printResults(std::map<int, std::string> results)
     results_access.unlock();
 }
 
+void recordResults(int& time, std::string& name)
+{
+    results_access.lock();
+    results.emplace(std::pair<int, std::string>(time, name));
+    results_access.unlock();
+}
+
 void race(std::string name, double speed)
 {
     double distance = 0;
-    int timer = 0;
+    int time = 0;
     double distanceLeft = 100;
     while (distanceLeft > 0)
     {
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        timer += 1;
+        time += 1;
         if (distanceLeft < speed)
         {
             distance += distanceLeft;
@@ -56,22 +70,20 @@ void race(std::string name, double speed)
             distance += speed;
             distanceLeft -= speed;
         }
-        std::cout << (std::stringstream() << "Timer: " << std::setw(2) << std::setfill('0') << timer << " s\tAthlete: "
+        std::cout << (std::stringstream() << "Timer: " << std::setw(2) << std::setfill('0') << time << " s\tAthlete: "
             << std::setw(15) << std::setfill(' ') << name << "\tDistance: " << std::fixed << std::setprecision(1) << distance << '\n').str();
     }
 
-    results_access.lock();
-    results.emplace(std::pair<int, std::string>(timer, name));
-    results_access.unlock();
+    recordResults(time, name);
 }
 
 void getInfo(std::string& name, double& speed)
 {
     std::cout << "Enter athlete's name: ";
     std::getline(std::cin, name);
-    std::cout << "Enter athlete's speed: ";
     do
     {
+        std::cout << "Enter athlete's speed: ";
         std::cin >> speed;
     } while (!correctInput(speed));
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -79,7 +91,7 @@ void getInfo(std::string& name, double& speed)
 
 int main()
 {
-    std::map<std::string, double> athletes;
+    std::multimap<std::string, double> athletes;
     std::string name;
     double speed;
     for (int i = 0; i < 6; ++i)
@@ -89,29 +101,25 @@ int main()
     }
     std::cout << std::endl;
 
-    std::map<std::string, double>::iterator it = athletes.begin();
-    std::thread lane_1(race, it->first, it->second);
-    ++it;
-    std::thread lane_2(race, it->first, it->second);
-    ++it;
-    std::thread lane_3(race, it->first, it->second);
-    ++it;
-    std::thread lane_4(race, it->first, it->second);
-    ++it;
-    std::thread lane_5(race, it->first, it->second);
-    ++it;
-    std::thread lane_6(race, it->first, it->second);
+    std::vector<std::thread> lanes;
+    std::multimap<std::string, double>::iterator it = athletes.begin();
+    for (int i = 0; i < 6; ++i)
+    {
+        lanes.emplace_back(race, it->first, it->second);
+        ++it;
+    }
 
-    lane_1.join();
-    lane_2.join();
-    lane_3.join();
-    lane_4.join();
-    lane_5.join();
-    lane_6.join();
+    for (auto& l : lanes)
+    {
+        l.join();
+    }
 
     printResults(results);
 
     return 0;
 }
+
+
+
 
 
