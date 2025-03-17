@@ -1,14 +1,25 @@
+// Продвинутые темы и техники C++
+// Урок 10. Введение в многопоточность
+
+// Задание 2. Симуляция работы вокзала
+
 #include <iostream>
 #include <thread>
-#include <chrono>
 #include <mutex>
+#include <condition_variable>
+#include <chrono>
+#include <string>
 #include <vector>
-#include <sstream>
-#include <map>
+#include <queue>
 #include <limits>
 #include <numeric>
 
-bool correctInputInt(int input)
+std::mutex stationAccess;
+std::condition_variable stationCV;
+std::queue<std::string> stationQueue;
+bool stationOccupied = false;
+
+bool correctInput(int input)
 {
     if (std::cin.fail() || std::cin.peek() != '\n' || input <= 0)
     {
@@ -21,85 +32,74 @@ bool correctInputInt(int input)
         return true;
 }
 
-bool correctInputChar(char input)
+void trainArrival(const std::string& trainName, const int& travelTime) 
 {
-    if (std::cin.fail() || std::cin.peek() != '\n' || input != 'd')
-    {
-        std::cerr << "Incorrect input.\n";
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        return false;
-    }
-    else
-        return true;
-}
+    std::this_thread::sleep_for(std::chrono::seconds(travelTime));
 
-std::vector<char> station;
-std::map<int, char> queue;
-std::mutex station_access;
-
-void travelling(char name, int time)
-{
-    std::this_thread::sleep_for(std::chrono::seconds(time));
-    if (!station.empty())
     {
-        std::cout << (std::stringstream() << "\nTrain " << name << " is waiting\n").str();
-        queue.emplace(queue.size() + 1, name);                                               // ADD MUTEX
-    }
-    while (true)
-        if (queue.empty() || queue.begin()->second == name)
+        std::unique_lock<std::mutex> lock(stationAccess);
+        stationQueue.push(trainName);
+
+        if (stationOccupied) 
         {
-            if (station_access.try_lock())
-            {
-                std::cout << (std::stringstream() << "\nTrain " << name << " has arrived at the station.\n").str();
-                station.push_back(name);
-                std::cout << "Press <d> to depart. \n";
-                char command;
-                do
-                {
-                    std::cin >> command;
-                } while (!correctInputChar(command));
-                if (command == 'd')
-                {
-                    station.pop_back();
-                    std::cout << (std::stringstream() << "\nTrain " << name << " has left the station\n").str();
-                }
-                if (queue.begin()->second == name)
-                {
-                    queue.erase(queue.begin());
-                }
-                station_access.unlock();
-                break;
-            }
-        }       
-}
-    
-int main()
-{
-    char train_1('A'), train_2('B'), train_3('C');
-    double time_A, time_B, time_C;
-    std::cout << "Enter travelling time for Train " << train_1 << ": ";
-    do
-    {
-        std::cin >> time_A; 
-    } while (!correctInputInt(time_A));
-    std::cout << "Enter travelling time for Train " << train_2 << ": ";
-    do
-    {
-        std::cin >> time_B; 
-    } while (!correctInputInt(time_B));
-    std::cout << "Enter travelling time for Train " << train_3 << ": ";
-    do
-    {
-        std::cin >> time_C; 
-    } while (!correctInputInt(time_C));
+            std::cout << "\nTrain " << trainName << " is waiting.\n";
+            stationCV.wait(lock, [&] { return stationQueue.front() == trainName && !stationOccupied; });
+        }
 
-    std::thread departure_1(travelling, train_1, time_A);
-    std::thread departure_2(travelling, train_2, time_B);
-    std::thread departure_3(travelling, train_3, time_C);
-    departure_1.join();
-    departure_2.join();
-    departure_3.join();
+        stationOccupied = true;
+        std::cout << "\nTrain " << trainName << " arrived at the station.\n";
+    } 
+
+    std::string command;
+    while (true) 
+    {
+        std::cout << "Enter 'depart' to leave the station.\n";
+        std::cin >> command;
+        if (command == "depart") 
+        {
+            break;
+        }
+        else 
+        {
+            std::cout << trainName << "Incorrect input.\n";
+        }
+    }
+
+    {
+        std::unique_lock<std::mutex> lock(stationAccess);
+        std::cout << "\nTrain " << trainName << " left the station.\n";
+        stationOccupied = false;
+        stationQueue.pop(); 
+        stationCV.notify_one(); 
+    }
+}
+
+int main() 
+{
+    std::vector<std::string> trainNames = { "A", "B", "C" };
+    std::vector<int> travelTimes(3);
+
+    for (size_t i = 0; i < trainNames.size(); ++i) 
+    {
+        do
+        {
+            std::cout << "Enter travelling time for Train " << trainNames[i] << " (in seconds): ";
+            std::cin >> travelTimes[i];
+        } while (!correctInput(travelTimes[i]));  
+    }
+
+    std::vector<std::thread> trains;
+    for (size_t i = 0; i < trainNames.size(); ++i) 
+    {
+        trains.emplace_back(trainArrival, trainNames[i], travelTimes[i]);
+    }
+
+    for (auto& train : trains) 
+    {
+        train.join();
+    }
+
+    std::cout << "\nAll the trains left the station.\n";
 
     return 0;
 }

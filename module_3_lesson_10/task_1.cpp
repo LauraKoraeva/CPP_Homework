@@ -33,7 +33,6 @@ bool correctInput(int input)
 void printResults(std::multimap<int, std::string> results)
 {
     results_access.lock();
-    std::cout << results.size() << '\n';
     std::cout << "\n**********RESULTS**********\n";
     std::cout << "Time\t" << std::setw(15) << "Name" << '\n';
     for (std::multimap<int, std::string>::iterator it = results.begin(); it != results.end(); ++it)
