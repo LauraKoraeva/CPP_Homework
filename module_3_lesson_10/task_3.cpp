@@ -1,179 +1,180 @@
-// DRAFT
+// Продвинутые темы и техники C++
+// Урок 10. Введение в многопоточность
+
+// Задание 3. Симуляция работы кухни онлайн-ресторана
 
 #include <iostream>
-#include <thread>
-#include <chrono>
-#include <ctime>
-#include <map>
+#include <string>
 #include <vector>
+#include <queue>
+#include <chrono>
+#include <random>
+#include <thread>
 #include <mutex>
+#include <condition_variable>
 
-void timeInterval()
+struct Order 
 {
-    int time;
-    std::srand(std::time(nullptr));
-    time = std::rand() % 6 + 5;
-    std::this_thread::sleep_for(std::chrono::seconds(time));
-}
-
-class Restaurant
-{
-    enum Menu
-    {
-        PIZZA = 1,
-        SOUP,
-        STEAK,
-        SALAD,
-        SUSHI,
-    };
-
-    std::vector<int> kitchen;
-    std::mutex kitchen_access;
-    std::vector<int> delivery;
-    std::mutex delivery_access;
-    std::map<int, int> orderList;
-    std::mutex orderList_access;
-    std::map<int, int> deliveryList;
-    std::mutex deliveryList_access;
-
-public:
-    int getChoice()
-    {
-        std::srand(std::time(nullptr));
-        int menuChoice = std::rand() % 6;
-        return menuChoice;
-    }
-
-    void printChoice(int choiceNumber)
-    {
-        switch (choiceNumber)
-        {
-        case 1:
-            std::cout << "Pizza";
-        case 2:
-            std::cout << "Soup";
-        case 3:
-            std::cout << "Steak";
-        case 4:
-            std::cout << "Salad";
-        case 5:
-            std::cout << "Sushi";
-        }
-    }
-
-    void deliver(int orderID, int menuChoice)
-    {
-        if (!delivery.empty())
-        {
-            deliveryList_access.lock();
-            deliveryList.emplace(orderID, menuChoice);
-            deliveryList_access.unlock();
-        }
-        while (true)
-        {
-            if (delivery.empty() || (!deliveryList.empty() && deliveryList.begin()->first == orderID))
-            {
-                if (delivery_access.try_lock())
-                {
-                    std::cout << "Delivering\n";
-                    std::this_thread::sleep_for(std::chrono::seconds(30));
-
-                    delivery_access.unlock();
-                    if (!deliveryList.empty() && deliveryList.begin()->first == orderID)
-                    {
-                        deliveryList_access.lock();
-                        deliveryList.erase(orderList.begin());
-                        deliveryList_access.unlock();
-                    }
-                    break;
-                }
-            }
-        }
-    }
-
-    void cook(int orderID, int menuChoice)
-    {
-        while (true)
-        {
-            if (kitchen.empty() || (!orderList.empty() && orderList.begin()->first == orderID))
-            {
-                if (kitchen_access.try_lock())
-                {
-                    std::srand(std::time(nullptr));
-                    std::cout << "Cooking\n";
-                    std::this_thread::sleep_for(std::chrono::seconds(std::rand() % 11 + 5));
-
-                    kitchen_access.unlock();
-                    if (!orderList.empty() && orderList.begin()->first == orderID)
-                    {
-                        orderList_access.lock();
-                        orderList.erase(orderList.begin());
-                        orderList_access.unlock();
-                    }
-                    break;
-                }
-            }
-        }
-        deliver(orderID, menuChoice);
-    }
-
-    void order()
-    {
-        std::cout << "Ordering\n";
-        int menuChoice = getChoice();
-        int orderID = orderList.size() + 1;
-        orderList_access.lock();
-        orderList.emplace(orderID, menuChoice);
-        orderList_access.unlock();
-        cook(orderID, menuChoice);
-    }
+    int id;
+    std::string dish;
 };
 
-int main()
+
+std::mutex kitchenAccess;
+std::mutex deliveryAccess;
+std::condition_variable kitchenCV;
+std::condition_variable deliveryCV;
+std::queue<Order> orderQueue;
+std::queue<Order> readyQueue;
+bool kitchenBusy = false;
+int deliveriesCompleted = 0;        
+const int totalDeliveries = 10;     
+
+
+int getRandomNumber(int min, int max) 
 {
-    Restaurant orders[10];
+    static std::random_device rd;
+    static std::mt19937 mt(rd());
+    std::uniform_int_distribution<> distribution(min, max);
+    return distribution(mt);
+}
 
-    std::thread order1(&Restaurant::order, &orders[1]);
-    order1.detach();
-    timeInterval();
-    std::thread order2(&Restaurant::order, &orders[2]);
-    order2.detach();
-    timeInterval();
-    std::thread order3(&Restaurant::order, &orders[3]);
-    order3.detach();
-    timeInterval();
-    std::thread order4(&Restaurant::order, &orders[4]);
-    order4.detach();
-    timeInterval();
-    std::thread order5(&Restaurant::order, &orders[5]);
-    order5.detach();
-    timeInterval();
-    std::thread order6(&Restaurant::order, &orders[6]);
-    order6.detach();
-    timeInterval();
-    std::thread order7(&Restaurant::order, &orders[7]);
-    order7.detach();
-    timeInterval();
-    std::thread order8(&Restaurant::order, &orders[8]);
-    order8.detach();
-    timeInterval();
-    std::thread order9(&Restaurant::order, &orders[9]);
-    order9.detach();
-    timeInterval();
-    std::thread order10(&Restaurant::order, &orders[10]);
-    order10.detach();
 
-    if (order1.joinable()) order1.join();
-    if (order2.joinable()) order2.join();
-    if (order3.joinable()) order3.join();
-    if (order4.joinable()) order4.join();
-    if (order5.joinable()) order5.join();
-    if (order6.joinable()) order6.join();
-    if (order7.joinable()) order7.join();
-    if (order8.joinable()) order8.join();
-    if (order9.joinable()) order9.join();
-    if (order10.joinable()) order10.join();
+void takeOrder() 
+{
+    while (deliveriesCompleted < totalDeliveries)                                   
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(getRandomNumber(5, 10)));
+
+        std::string dish;
+        int dishIndex = getRandomNumber(1, 5);
+        switch (dishIndex) 
+        {
+        case 1: dish = "pizza"; break;
+        case 2: dish = "soup"; break;
+        case 3: dish = "steak"; break;
+        case 4: dish = "salad"; break;
+        case 5: dish = "sushi"; break;
+        }
+
+        static int orderID = 1;
+        Order newOrder{ orderID++, dish };
+
+        std::cout << "---------------------------------------------\n";
+        std::cout << "WAITER: order #" << newOrder.id << " for " << newOrder.dish << '\n';
+        std::cout << "---------------------------------------------\n";
+
+        {
+            std::lock_guard<std::mutex> lock(kitchenAccess);
+            orderQueue.push(newOrder);
+        }
+        kitchenCV.notify_one();
+    }
+}
+
+
+void prepareOrder() 
+{
+    while (deliveriesCompleted < totalDeliveries)                     
+    {
+        std::unique_lock<std::mutex> lock(kitchenAccess);
+        kitchenCV.wait(lock, [&] { return !orderQueue.empty() || deliveriesCompleted >= totalDeliveries; });   
+
+        if (deliveriesCompleted >= totalDeliveries && orderQueue.empty())                  
+        {
+            return;
+        }
+
+        Order currentOrder = orderQueue.front();
+        orderQueue.pop();
+        kitchenBusy = true;
+
+        std::cout << "=============================================\n";
+        std::cout << "KITCHEN: cooking order #" << currentOrder.id << " for " << currentOrder.dish << '\n';
+        std::cout << "=============================================\n";
+
+        lock.unlock(); 
+        std::this_thread::sleep_for(std::chrono::seconds(getRandomNumber(5, 15)));
+        lock.lock();
+
+        readyQueue.push(currentOrder);
+        kitchenBusy = false;
+
+        std::cout << "=============================================\n";
+        std::cout << "KITCHEN: order #" << currentOrder.id << " for " << currentOrder.dish << " is ready\n";
+        std::cout << "=============================================\n";
+
+        deliveryCV.notify_one();
+    }
+}
+
+
+void deliverOrder() 
+{
+    while (deliveriesCompleted < totalDeliveries)            
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(30));
+
+        std::unique_lock<std::mutex> lock(deliveryAccess);
+        deliveryCV.wait(lock, [&] { return !readyQueue.empty() || deliveriesCompleted >= totalDeliveries; });      
+
+        if (deliveriesCompleted >= totalDeliveries && readyQueue.empty())             
+        {
+            return;
+        }
+
+        std::vector<Order> currentDeliveries;
+        while (!readyQueue.empty()) 
+        {
+            currentDeliveries.push_back(readyQueue.front());
+            readyQueue.pop();
+        }
+
+        if (!currentDeliveries.empty()) 
+        {
+            std::cout << "`````````````````````````````````````````````\n";
+            std::cout << "DELIVERY: picking up orders: ";
+            for (const auto& order : currentDeliveries) 
+            {
+                std::cout << "#" << order.id << " ";
+            }
+            std::cout << "\n`````````````````````````````````````````````\n";
+
+            std::this_thread::sleep_for(std::chrono::seconds(5)); 
+
+            std::cout << "`````````````````````````````````````````````\n";
+            std::cout << "DELIVERY: orders delivered: ";
+            for (const auto& order : currentDeliveries) 
+            {
+                std::cout << "#" << order.id << " ";
+                
+            }
+            std::cout << "\n`````````````````````````````````````````````\n";
+
+            deliveriesCompleted++;
+
+            std::cout << "\n*********************************************\n";
+            std::cout << "COMPLETED " << deliveriesCompleted << " OUT OF " << totalDeliveries << " DELIVERIES.\n";    
+            std::cout << "*********************************************\n\n";
+        }
+        else 
+        {
+            std::cout << "`````````````````````````````````````````````\n";
+            std::cout << "DELIVERY: no new orders for delivery.\n";
+            std::cout << "`````````````````````````````````````````````\n";
+        }
+    }
+}
+
+int main() 
+{
+    std::thread waiter(takeOrder);
+    std::thread kitchen(prepareOrder);
+    std::thread courier(deliverOrder);
+
+    waiter.join();
+    kitchen.join();
+    courier.join();
 
     return 0;
 }
-
