@@ -11,7 +11,7 @@
 
 void showMenu()
 {
-    std::cout << "Choose operation:\n";
+    std::cout << "Choose the operation:\n";
     std::cout << "1 - create circle\n";
     std::cout << "2 - create triangle\n";
     std::cout << "3 - create square\n";
