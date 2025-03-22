@@ -40,7 +40,7 @@ int main()
             if (actorLower.find(searchNameLower) != std::string::npos) 
             {
                 std::string character = actorInfo["character"].get<std::string>();
-                std::cout << "Film: " << movieTitle << ", Character: " << character << '\n';
+                std::cout << "Actor: " << actor << ", Film: " << movieTitle << ", Character: " << character << '\n';
                 found = true;
             }
         }
@@ -48,7 +48,7 @@ int main()
 
     if (!found) 
     {
-        std::cout << "Actor " << actorName << " was not found in any of the films." << '\n';
+        std::cout << "Actor \"" << actorName << "\" was not found in any of the films." << '\n';
     }
 
     return 0;
