@@ -60,9 +60,9 @@ void takeOrder()
         static int orderID = 1;
         Order newOrder{ orderID++, dish };
 
-        std::cout << "---------------------------------------------\n";
+        std::cout << "------------------------------------------------\n";
         std::cout << "WAITER: order #" << newOrder.id << " for " << newOrder.dish << '\n';
-        std::cout << "---------------------------------------------\n";
+        std::cout << "------------------------------------------------\n";
 
         {
             std::lock_guard<std::mutex> lock(kitchenAccess);
@@ -89,9 +89,9 @@ void prepareOrder()
         orderQueue.pop();
         kitchenBusy = true;
 
-        std::cout << "=============================================\n";
+        std::cout << "================================================\n";
         std::cout << "KITCHEN: cooking order #" << currentOrder.id << " for " << currentOrder.dish << '\n';
-        std::cout << "=============================================\n";
+        std::cout << "================================================\n";
 
         lock.unlock(); 
         std::this_thread::sleep_for(std::chrono::seconds(getRandomNumber(5, 15)));
@@ -100,14 +100,21 @@ void prepareOrder()
         readyQueue.push(currentOrder);
         kitchenBusy = false;
 
-        std::cout << "=============================================\n";
+        std::cout << "================================================\n";
         std::cout << "KITCHEN: order #" << currentOrder.id << " for " << currentOrder.dish << " is ready\n";
-        std::cout << "=============================================\n";
+        std::cout << "================================================\n";
 
         deliveryCV.notify_one();
     }
 }
 
+void printCurrentDeliveries(const std::vector<Order>& currentDeliveries)
+{
+    for (const auto& order : currentDeliveries) 
+    {
+        std::cout << "#" << order.id << " ";
+    }
+}
 
 void deliverOrder() 
 {
@@ -132,36 +139,29 @@ void deliverOrder()
 
         if (!currentDeliveries.empty()) 
         {
-            std::cout << "`````````````````````````````````````````````\n";
+            std::cout << "````````````````````````````````````````````````\n";
             std::cout << "DELIVERY: picking up orders: ";
-            for (const auto& order : currentDeliveries) 
-            {
-                std::cout << "#" << order.id << " ";
-            }
-            std::cout << "\n`````````````````````````````````````````````\n";
+            printCurrentDeliveries(currentDeliveries);
+            std::cout << "\n````````````````````````````````````````````````\n";
 
             std::this_thread::sleep_for(std::chrono::seconds(5)); 
 
-            std::cout << "`````````````````````````````````````````````\n";
+            std::cout << "````````````````````````````````````````````````\n";
             std::cout << "DELIVERY: orders delivered: ";
-            for (const auto& order : currentDeliveries) 
-            {
-                std::cout << "#" << order.id << " ";
-                
-            }
-            std::cout << "\n`````````````````````````````````````````````\n";
+            printCurrentDeliveries(currentDeliveries);
+            std::cout << "\n````````````````````````````````````````````````\n";
 
             deliveriesCompleted++;
 
-            std::cout << "\n*********************************************\n";
+            std::cout << "\n************************************************\n";
             std::cout << "COMPLETED " << deliveriesCompleted << " OUT OF " << totalDeliveries << " DELIVERIES.\n";    
-            std::cout << "*********************************************\n\n";
+            std::cout << "************************************************\n\n";
         }
         else 
         {
-            std::cout << "`````````````````````````````````````````````\n";
+            std::cout << "````````````````````````````````````````````````\n";
             std::cout << "DELIVERY: no new orders for delivery.\n";
-            std::cout << "`````````````````````````````````````````````\n";
+            std::cout << "````````````````````````````````````````````````\n";
         }
     }
 }
