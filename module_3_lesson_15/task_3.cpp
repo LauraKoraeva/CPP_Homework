@@ -1,3 +1,8 @@
+// Продвинутые темы и техники C++
+// Урок 15. Использование исключений
+
+// Задание 3. Реестр данных на шаблонах
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -17,7 +22,6 @@ bool correctInput(T input)
     else
         return true;
 }
-
 
 
 enum Commands
@@ -41,7 +45,6 @@ void showCommands()
 }
 
 
-
 enum Types
 {
     INT = 1,
@@ -57,12 +60,11 @@ void printTypes()
 }
 
 
-
 template <typename KeyType, typename ValueType>
-class Registry 
+class Registry
 {
 private:
-    struct Entry 
+    struct Entry
     {
         KeyType key;
         ValueType value;
@@ -71,30 +73,30 @@ private:
     std::vector<Entry> entries;
 
 public:
-    void add(const KeyType& key, const ValueType& value) 
+    void add(const KeyType& key, const ValueType& value)
     {
         entries.push_back({key, value});
     }
 
-    void remove(const KeyType& key) 
+    void remove(const KeyType& key)
     {
         bool found = false;
-        for (auto it = entries.begin(); it != entries.end(); ) 
+        for (auto it = entries.begin(); it != entries.end(); )
         {
-            if (it->key == key) 
+            if (it->key == key)
             {
                 it = entries.erase(it);
                 found = true;
                 std::cout << "\n==================================================\n";
                 std::cout << "The entry was removed from the registry.\n";
                 std::cout << "==================================================\n\n";
-            } 
-            else 
+            }
+            else
             {
                 ++it;
             }
         }
-        if (!found) 
+        if (!found)
         {
             std::cout << "\n==================================================\n";
             std::cout << "\"" << key << "\" was not found." << std::endl;
@@ -102,9 +104,9 @@ public:
         }
     }
 
-    void print() const 
+    void print() const
     {
-        if (entries.empty()) 
+        if (entries.empty())
         {
             std::cout << "\n==================================================\n";
             std::cout << "Registry is empty." << std::endl;
@@ -114,19 +116,19 @@ public:
         std::cout << "\n==================================================\n";
         std::cout << "CONTENTS OF THE REGISTRY:" << '\n';
         std::cout << "==================================================\n";
-        for (const auto& entry : entries) 
+        for (const auto& entry : entries)
         {
             std::cout << "Key: " << entry.key << "\tValue: " << entry.value << std::endl;
         }
         std::cout << "==================================================\n\n";
     }
 
-    void find(const KeyType& key) const 
+    void find(const KeyType& key) const
     {
         bool found = false;
-        for (const auto& entry : entries) 
+        for (const auto& entry : entries)
         {
-            if (entry.key == key) 
+            if (entry.key == key)
             {
                 std::cout << "\n==================================================\n";
                 std::cout << "Key: " << entry.key << "\tValue: " << entry.value << std::endl;
@@ -134,7 +136,7 @@ public:
                 found = true;
             }
         }
-        if (!found) 
+        if (!found)
         {
             std::cout << "\n==================================================\n";
             std::cout << "\"" << key << "\" was not found." << std::endl;
@@ -144,16 +146,18 @@ public:
 };
 
 
-
 template <typename KeyType, typename ValueType>
-void processCommands(Registry<KeyType, ValueType>& registry) 
+void processCommands(Registry<KeyType, ValueType>& registry)
 {
     int command;
-    while (true) 
+    while (true)
     {
-        showCommands();
-        std::cout << "Choose the command: ";
-        std::cin >> command; // проверка
+        do
+        {
+            showCommands();
+            std::cout << "Choose the command: ";
+            std::cin >> command;
+        } while (!correctInput(command));
 
         KeyType key;
         ValueType value;
@@ -161,13 +165,13 @@ void processCommands(Registry<KeyType, ValueType>& registry)
         switch (command)
         {
         case ADD:
-            do 
+            do
             {
                 std::cout << "Enter the key: ";
                 std::cin >> key;
             } while (!correctInput(key));
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            do 
+            do
             {
                 std::cout << "Enter the value: ";
                 std::cin >> value;
@@ -180,7 +184,7 @@ void processCommands(Registry<KeyType, ValueType>& registry)
             std::cout << "==================================================\n\n";
             break;
         case REMOVE:
-            do 
+            do
             {
                 std::cout << "Enter the key: ";
                 std::cin >> key;
@@ -193,7 +197,7 @@ void processCommands(Registry<KeyType, ValueType>& registry)
             registry.print();
             break;
         case FIND:
-            do 
+            do
             {
                 std::cout << "Enter the key: ";
                 std::cin >> key;
@@ -203,7 +207,7 @@ void processCommands(Registry<KeyType, ValueType>& registry)
             registry.find(key);
             break;
         case EXIT:
-            break;
+            return;
         default:
             std::cout << "Unknown command.\n";
             break;
@@ -212,67 +216,73 @@ void processCommands(Registry<KeyType, ValueType>& registry)
 }
 
 
-
-int main() 
+int main()
 {
-    std::cout << "Choose the type of the key:\n";
-    printTypes();
-    int keyType;
-    std::cin >> keyType; // проверка
+    int keyType, valueType;
+    do
+    {
+        std::cout << "Choose the type of the key:\n";
+        printTypes();
+        std::cin >> keyType;
+    } while (!correctInput(keyType));
 
-    std::cout << "Choose the type of the value:\n";
-    printTypes();
-    int valueType;
-    std::cin >> valueType; // проверка
+    do
+    {
+        std::cout << "Choose the type of the value:\n";
+        printTypes();
+        std::cin >> valueType;
+    } while (!correctInput(valueType));
 
-    if (keyType == INT && valueType == INT) 
+
+    if (keyType == INT && valueType == INT)
     {
         Registry<int, int> registry;
         processCommands(registry);
-    } 
-    else if (keyType == INT && valueType == DOUBLE) 
+    }
+    else if (keyType == INT && valueType == DOUBLE)
     {
         Registry<int, double> registry;
         processCommands(registry);
-    } 
-    else if (keyType == INT && valueType == STRING) 
+    }
+    else if (keyType == INT && valueType == STRING)
     {
         Registry<int, std::string> registry;
         processCommands(registry);
-    } else if (keyType == DOUBLE && valueType == INT) 
+    } else if (keyType == DOUBLE && valueType == INT)
     {
         Registry<double, int> registry;
         processCommands(registry);
-    } 
-    else if (keyType == DOUBLE && valueType == DOUBLE) 
+    }
+    else if (keyType == DOUBLE && valueType == DOUBLE)
     {
         Registry<double, double> registry;
         processCommands(registry);
-    } 
-    else if (keyType == DOUBLE && valueType == STRING) 
+    }
+    else if (keyType == DOUBLE && valueType == STRING)
     {
         Registry<double, std::string> registry;
         processCommands(registry);
-    } 
-    else if (keyType == STRING && valueType == INT) 
+    }
+    else if (keyType == STRING && valueType == INT)
     {
         Registry<std::string, int> registry;
         processCommands(registry);
-    } 
-    else if (keyType == STRING && valueType == DOUBLE) 
+    }
+    else if (keyType == STRING && valueType == DOUBLE)
     {
         Registry<std::string, double> registry;
         processCommands(registry);
-    } 
-    else if (keyType == STRING && valueType == STRING) 
+    }
+    else if (keyType == STRING && valueType == STRING)
     {
         Registry<std::string, std::string> registry;
         processCommands(registry);
-    } 
-    else 
+    }
+    else
     {
         std::cout << "Unsupported key or value type." << std::endl;
     }
 
     return 0;
 }
+
