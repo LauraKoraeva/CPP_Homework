@@ -76,7 +76,14 @@ public:
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "----------------------------------------------------\n";
 
-            stock.emplace(itemCode, quantity);
+            if (stock.find(itemCode) != stock.end())
+            {
+                stock.at(itemCode) += quantity;
+            }
+            else
+            {
+                stock.emplace(itemCode, quantity);
+            }
 
             do
             {

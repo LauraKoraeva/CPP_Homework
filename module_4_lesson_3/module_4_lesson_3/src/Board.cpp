@@ -61,6 +61,7 @@ Board::Player Board::getCell(int position) const
 
 void Board::printBoard() const 
 {
+    std::cout << "\n=========================\n";
     for (int i = 0; i < 9; ++i) 
     {
         switch (board[i]) 
@@ -74,6 +75,7 @@ void Board::printBoard() const
             std::cout << '\n';
         }
     }
+    std::cout << "=========================\n";
 }
 
 void Board::clearBoard() 

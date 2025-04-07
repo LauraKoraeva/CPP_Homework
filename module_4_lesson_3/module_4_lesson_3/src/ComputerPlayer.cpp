@@ -3,8 +3,9 @@
 #include <algorithm>
 #include "ComputerPlayer.h"
 
-
 ComputerPlayer::ComputerPlayer(Board::Player mark) : Player(mark) { }
+
+std::string ComputerPlayer::getName() const { return "Computer"; }
 
 int ComputerPlayer::getMove(const Board& board) 
 {

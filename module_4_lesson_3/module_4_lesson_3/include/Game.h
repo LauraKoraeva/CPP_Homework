@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Board.h"
 #include "Player.h"
 #include "HumanPlayer.h"
@@ -17,9 +16,9 @@ class Game
     bool isGameOver();
     void printResult();
     void initPlayers(int gameMode);
-    void cleanupPlayers();
 
 public:
     Game();
+    ~Game();
     void play();
 };

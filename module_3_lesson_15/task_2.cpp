@@ -117,21 +117,6 @@ public:
         }
     }
 
-    void scanThePond()
-    {
-        for (int i = 0; i < 9; ++i)
-        {
-            switch (pond[i])
-            {
-            case FISH: std::cout << "fish   "; break;
-            case BOOT: std::cout << "boot   "; break;
-            case EMPTY: std::cout << "empty   "; break;
-            }
-            if ((i + 1) % 3 == 0)
-                std::cout << '\n';
-        }
-    }
-
     void checkTheCatch(int sector)
     {
         if (sector < 0 || sector >= 9)
@@ -155,9 +140,10 @@ public:
     void castTheRod()
     {
         int sector;
-        bool successfullCatch = false;
-
-        while(!successfullCatch)
+        bool caughtSomething = false;
+        bool successfulCatch = false;
+        int attemptsCount = 0;
+        while(!caughtSomething)
         {
             do
             {
@@ -176,26 +162,28 @@ public:
             catch(const CaughtAFishException& x)
             {
                 std::cerr << "Caught exception: " << x.what() << '\n';
-                successfullCatch = true;
+                caughtSomething = true;
+                successfulCatch = true;
             }
             catch(const CaughtABootException& x)
             {
                 std::cerr << "Caught exception: " << x.what() << '\n';
-                successfullCatch = true;
+                caughtSomething = true;
             }
             catch(const missedThePondException& x)
             {
                 std::cerr << "Caught exception: " << x.what() << '\n';
             }
-
+            
+            ++attemptsCount;
         }
+        if (successfulCatch)
+            std::cout << "Number of attempts: " << attemptsCount << '\n';
 
 
     }
 
     ~Fishing() { }
-
-
 };
 
 int main()

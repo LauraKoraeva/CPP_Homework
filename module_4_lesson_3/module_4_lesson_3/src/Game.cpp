@@ -1,5 +1,8 @@
-#include "Game.h"
 #include <iostream>
+#include <limits>
+#include <numeric>
+#include "Game.h"
+#include "Utility.h"
 
 Game::Game() : player1(nullptr), player2(nullptr), currentPlayerMark(Board::Player::X) { }
 
@@ -13,6 +16,7 @@ void Game::play()
         std::cout << "2 - Human versus Computer\n";
         std::cin >> gameMode;
     } while (!correctInput(gameMode));
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     initPlayers(gameMode);
 
@@ -28,13 +32,12 @@ void Game::play()
         } 
         else 
         {
-            std::cout << "Incorrect input. Try again.\n";
+            std::cout << "Incorrect input.\n";
         }
     }
 
     board.printBoard();
     printResult();
-    cleanupPlayers();
     board.clearBoard();
 }
 
@@ -70,16 +73,16 @@ void Game::printResult()
         if (winner == Board::Player::X) 
         {
             if (player1->getMark() == Board::Player::X)
-                std::cout << "Player 1 won (X)!\n";
+                std::cout << player1->getName() << " won (X)!\n";
             else
-                std::cout << "Player 2 won (X)!\n";
+                std::cout << player2->getName() << " won (X)!\n";
         } 
         else 
         {
              if (player1->getMark() == Board::Player::O)
-                std::cout << "Player 1 won (O)!\n";
+                std::cout << player1->getName() << " won (O)!\n";
             else
-                std::cout << "Player 2 won (O)!\n";
+                std::cout << player2->getName() << " won (O)!\n";
         }
     } 
     else 
@@ -92,19 +95,30 @@ void Game::initPlayers(int gameMode)
 {
     if (gameMode == 1) 
     {
+        std::string name1, name2;
         player1 = new HumanPlayer(Board::Player::X);
+        std::cout << "Player 1, enter your name: ";
+        std::getline(std::cin, name1);
+        player1->setName(name1);
         player2 = new HumanPlayer(Board::Player::O);
+        std::cout << "Player 2, enter your name: ";
+        std::getline(std::cin, name2);
+        player2->setName(name2);
     } 
     else 
     {
+        std::string name;
         player1 = new HumanPlayer(Board::Player::X);
+        std::cout << "Enter your name: ";
+        std::getline(std::cin, name);
+        player1->setName(name);
         player2 = new ComputerPlayer(Board::Player::O);
     }
     currentPlayerMark = Board::Player::X; 
 
 }
 
-void Game::cleanupPlayers() 
+Game::~Game() 
 {
     delete player1;
     delete player2;
