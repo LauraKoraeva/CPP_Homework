@@ -1,101 +1,94 @@
-#include <iostream>
 #include "Timer.h"
 
-Timer::Timer() : isRunning(false), isPaused(false), durationSeconds(0), elapsedSeconds(0) { }
-
-void Timer::start(int inDurationSeconds, std::function<void()> inCallback)
-{
-    if (isRunning)
-    {
-        std::cerr << "Timer is already running.\n";
-        return;
-    }
-
-    startTime = std::chrono::steady_clock::now();
-    durationSeconds = inDurationSeconds;
-    elapsedSeconds = 0; // 
-    isRunning = true;
-    isPaused = false; //
-    callback = inCallback;
-
-    timerThread = std::thread([this]() 
-    {
-        std::unique_lock<std::mutex> lock(mutex);
-        auto start = std::chrono::steady_clock::now();
-
-        while (isRunning && elapsedSeconds < durationSeconds)
-        {
-            while (isPaused)
-            {
-                cv.wait(lock);
-            }
-
-            auto now = std::chrono::steady_clock::now();
-            int elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - start).count();
-
-            if (elapsed > 0)
-            {
-                elapsedSeconds += elapsed;
-                start = now;
-            }
-
-            if (elapsedSeconds < durationSeconds)
-            {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            }
-        }
-
-        isRunning = false;
-        if(callback)
-        {
-            callback();
-        }
-    });
-    timerThread.detach(); //
-    
+Timer::Timer() : durationSeconds(0), elapsedSeconds(0), isRunning(false), isPaused(false) 
+{ 
+	Session();
 }
+
+
+void Timer::run()
+{
+	while (isRunning && elapsedSeconds < durationSeconds)
+	{
+		if (isPaused)
+		{
+			std::unique_lock<std::mutex> lock(mutex);
+			cv.wait(lock, [&] { return isPaused == false; });
+		}
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		++elapsedSeconds;
+	}
+	if (elapsedSeconds >= durationSeconds)
+	{
+		finishTime = std::chrono::system_clock::now();
+		session.sessionFinishTime = finishTime;
+		stop();
+	}
+}
+
+
+
+void Timer::start(Session& inSession, std::function<void(Session& s)> inCallback)
+{
+	if (isRunning)
+	{
+		std::cout << "Timer is already running.\n";
+		return;		
+	}
+	durationSeconds = inSession.durationMinutes * 60;
+	session = inSession;
+	isRunning = true;
+	isPaused = false;
+	callback = inCallback;
+	startTime = std::chrono::system_clock::now();
+	session.sessionStartTime = startTime;
+    std::cout << "Running\n";
+	timerThread = std::thread([this]() { run(); }); 
+	timerThread.detach(); // ///////////////////////
+}
+
 
 
 void Timer::pause()
 {
-    if (isRunning && !isPaused)
-    {
-        std::unique_lock<std::mutex> lock(mutex);
-        isPaused = true;
-        std::cout << "Timer paused.\n";
-    }
+	if (isRunning && !isPaused)
+	{
+		std::unique_lock<std::mutex> lock(mutex);
+		std::cout << "Paused\n";
+		isPaused = true;
+		cv.notify_one();
+	}
 }
+
 
 
 void Timer::resume()
 {
-    if (isRunning && isPaused)
-    {
-        std::unique_lock<std::mutex> lock(mutex);
-        isPaused = false;
-        cv.notify_one();
-        std::cout << "Timer resumed.\n";
-    }
+	if (isPaused)
+	{
+		std::unique_lock<std::mutex> lock(mutex);
+		std::cout << "Resumed\n";
+		isPaused = false;
+		cv.notify_one();
+	}
 }
+
 
 
 void Timer::stop()
 {
-    if (isRunning)
-    {
-        std::unique_lock<std::mutex> lock(mutex);
-        isRunning = false;
-        isPaused = false;
-        cv.notify_one();
-
-        if (timerThread.joinable())
-        {
-            timerThread.join();
-        }
-        std::cout << "Timer stopped.\n";
-    }
-    else
-    {
-        std::cout << "Timer not running.\n";
-    }
+	if (isRunning || isPaused)
+	{
+		isRunning = false;
+		
+	
+		session.durationMinutes = elapsedSeconds / 60;
+		std::cout << "Stopped\n";
+		//timerThread.join();
+		callback(session);
+	}
 }
+
+
+bool Timer::is_Running() { return isRunning; };
+bool Timer::is_Paused() { return isPaused; };
