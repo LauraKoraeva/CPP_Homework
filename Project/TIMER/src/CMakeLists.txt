@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 
 
 set(MY_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
-add_executable(TicTacToe
+add_executable(focus_timer
 	main.cpp 
 	${MY_INCLUDE_DIR}/Config.h 
 	Config.cpp
@@ -15,4 +15,4 @@ add_executable(TicTacToe
 	${MY_INCLUDE_DIR}/UI.h 
 	UI.cpp 
 )
-target_include_directories(TicTacToe PUBLIC ${MY_INCLUDE_DIR})
+target_include_directories(focus_timer PUBLIC ${MY_INCLUDE_DIR})
